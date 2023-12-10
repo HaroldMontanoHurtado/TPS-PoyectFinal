@@ -1,4 +1,4 @@
-from connection import conectarBD
+from .connection import conectarBD
 from tkinter import messagebox
 
 '''
