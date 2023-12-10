@@ -37,6 +37,20 @@ def select_table(tabla):
 
     return listar_tabla
 
+def custom_consulta(query):
+    conexion = conectarBD()
+    
+    listar_fila = []
+    
+    try:
+        conexion.cursor.execute(query)
+        listar_fila = conexion.cursor.fetchall()
+        conexion.cerrar()
+    except Exception as ex:
+        messagebox.showerror('ERROR EN LA CONSULTA', f'{ex}.')
+
+    return listar_fila
+
 def agregar(tabla, objeto):
     conexion = conectarBD()
     quary=''

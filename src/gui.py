@@ -71,7 +71,6 @@ class Window(CTk):
         optionmenu.place(x=290, y=420)
 
     ##### STATES FRAME #####
-    
     def states_frame(self):
         self.states_buttons()
         self.states_labels()
