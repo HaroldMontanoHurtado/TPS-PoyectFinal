@@ -8,7 +8,7 @@ class conectarBD:
                 host = "localhost",
                 user = "postgres",
                 password = "andres2903",
-                database = "postgres", # HAY QUE CAMBIARLO
+                database = "gestor_pruebas", # HAY QUE CAMBIARLO
                 port = "5432"  # El puerto puede ser opcional
                 )
             self.cursor = self.connection.cursor()

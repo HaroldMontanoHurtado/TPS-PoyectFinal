@@ -1,6 +1,9 @@
 from customtkinter import *
-from tkinter import messagebox, ttk
-from tkcalendar import Calendar, DateEntry
+from tkinter import ttk
+from tkcalendar import DateEntry
+#from db.consultas_db import *
+
+ventana=0
 
 class Window(CTk):
     def __init__(self, *args, **kwargs):
@@ -18,13 +21,15 @@ class Window(CTk):
         self.title('Sistema de gestion de pruebas de software')
         self.resizable(0,0)
         ####### componentes agregados #######
-        self.ventanas=[0,1,2]
-        self.ventana=2
-        
-        if self.ventana==1:
+        global ventana
+        if ventana==1:
             self.states_frame()
-        elif self.ventana==2:
-            self.tests_frame()
+        elif ventana==2:
+            self.poly_frame()
+            self.test_items_exclusive()
+        elif ventana==3:
+            self.poly_frame()
+            self.gestor_items_error()
         else:
             self.home_frame()
 
@@ -36,17 +41,16 @@ class Window(CTk):
         self.home_buttons()
 
     def home_buttons(self):
-        global bt_create_proj, bt_bt_manage
         # Se crean como globas para hacer alternar el estado del boton
         bt_create_proj = CTkButton(
-            master=self, text="Crear\nProtecto", #command=funcion_button_BFS,
-            width=250, height=120, border_width=0, state='normal',
+            master=self, text="Crear\nProtecto",# command=self.cambia_a_StateFrame,
+            width=250, height=120, state='desanable',
             font=('Calisto MT', 30))
         bt_create_proj.place(x=290, y=260)
 
         bt_bt_manage = CTkButton(
-            master=self, text="Gestionar\nProyecto", #command=funcion_button_IDS,
-            width=250, height=120, border_width=0, state='normal',
+            master=self, text="Gestionar\nProyecto", command=self.cambia_a_StateFrame,
+            width=250, height=120, state='normal',
             font=('Calisto MT', 30))
         bt_bt_manage.place(x=580, y=260)
 
@@ -83,18 +87,18 @@ class Window(CTk):
     def states_buttons(self):
         # Se crean como globas para hacer alternar el estado del boton
         bt_agregar = CTkButton(
-            master=self, text="Agregar", #command=funcion_button_BFS,
+            master=self, text="Agregar", command=self.cambia_a_TestFrame,
             width=240, height=80, font=('Calisto MT', 30))
         bt_agregar.place(x=40, y=90)
 
         bt_editar = CTkButton(
-            master=self, text="Editar", #command=funcion_button_IDS,
+            master=self, text="Editar", command=self.cambia_a_GestorFrame,
             width=240, height=80, #border_width=0, state='normal',
             font=('Calisto MT', 30))
         bt_editar.place(x=300, y=90)
 
         bt_regresar = CTkButton(
-            master=self, text="Volver al Menú", #command=funcion_button_IDS,
+            master=self, text="Volver al Menú", command=self.cambia_a_home,
             width=240, height=80, font=('Calisto MT', 30))
         bt_regresar.place(x=840, y=90)
 
@@ -120,26 +124,24 @@ class Window(CTk):
         table.insert(parent='',index=0,values=('Listo','Mediana','Juan','Prueba unitaria'))
         table.bind('<<TreeviewSelect>>', lambda event: print(table.selection()))
 
-    ##### TESTS FRAME #####
+    ##### POLY FRAME #####
     
-    def tests_frame(self):
+    def poly_frame(self):
         self.tests_buttons()
         self.tests_labels()
         self.tests_optionMenus()
         self.tests_entries()
-        #self.test_items_exclusive()
-        self.gestor_items_error()
 
     def tests_buttons(self):
         
         bt_volver = CTkButton(
-            master=self, text="Volver", #command=funcion_button_BFS,
+            master=self, text="Volver", command=self.cambia_a_StateFrame,
             width=240, height=80, border_width=0, state='normal',
             font=('Calisto MT', 30))
         bt_volver.place(x=60, y=60)
 
         bt_inicio = CTkButton(
-            master=self, text="Volver al Menú", #command=funcion_button_IDS,
+            master=self, text="Volver al Menú", command=self.cambia_a_home,
             width=240, height=80, border_width=0, state='normal',
             font=('Calisto MT', 30))
         bt_inicio.place(x=820, y=60)
@@ -225,6 +227,37 @@ class Window(CTk):
         gestor_prueba.set("Caso de prueba")
         gestor_prueba.place(x=660, y=480)
 
-if __name__=="__main__":
-    window = Window()
-    window.mainloop()
+    ###### EXTRAS FUNCTIONS ######
+    def cambia_a_home(self):
+        global ventana
+        ventana=0
+        self.destroy()
+        iniit()
+
+    def cambia_a_StateFrame(self):
+        global ventana
+        ventana=1
+        print(f'ahora es: {ventana}')
+        self.destroy()
+        iniit()
+
+    def cambia_a_TestFrame(self):
+        global ventana
+        ventana=2
+        self.destroy()
+        iniit()
+
+    def cambia_a_GestorFrame(self):
+        global ventana
+        ventana=3
+        self.destroy()
+        iniit()
+
+
+def iniit():
+    if __name__=="__main__":
+        window = Window()
+        window.mainloop()
+
+iniit()
+
