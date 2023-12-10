@@ -1,7 +1,7 @@
 from customtkinter import *
 from tkinter import ttk
 from tkcalendar import DateEntry
-#from db.consultas_db import *
+from db.consultas_db import custom_consulta
 
 ventana=0
 
