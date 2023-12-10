@@ -1,5 +1,6 @@
 from customtkinter import *
-
+from tkinter import messagebox, ttk
+from tkcalendar import Calendar, DateEntry
 
 class Window(CTk):
     def __init__(self, *args, **kwargs):
@@ -14,155 +15,215 @@ class Window(CTk):
         self.geometry(
             str(self.wventana)+"x"+str(self.hventana)+
             "+"+str(self.pwidth)+"+"+str(self.pheight-50))
-        self.title('Pinocchio - Artificial intelligence')
+        self.title('Sistema de gestion de pruebas de software')
         self.resizable(0,0)
-        # componentes agregados
-        self.disHorinzButt = 20
-        self.stalling = 0
-        self.value_node = 0
-        self.route = []
+        ####### componentes agregados #######
+        self.ventanas=[0,1,2]
+        self.ventana=2
         
-        self.tabView()
-        self.optionMenus()
-        self.labels()
-        self.buttons()
-        #self.switchs()
-        #self.images() # será inicializado cuando se elija el mapa
+        if self.ventana==1:
+            self.states_frame()
+        elif self.ventana==2:
+            self.tests_frame()
+        else:
+            self.home_frame()
 
-    def labels(self):
-        label = CTkLabel(
-            master=self, text="Maps", fg_color="transparent",
-            width=80, height=30, font=('Comic Sans MS', 20))
-        label.place(x=40,y=480)
+    ##### HOME FRAME #####
 
-    def buttons(self):
-        
-        global button_BFS, button_IDS, button_UCS, button_Steps
+    def home_frame(self):
+        self.home_optionMenus()
+        self.home_labels()
+        self.home_buttons()
+
+    def home_buttons(self):
+        global bt_create_proj, bt_bt_manage
         # Se crean como globas para hacer alternar el estado del boton
-        button_BFS = CTkButton(
-            master=self, text="BFS", #command=funcion_button_BFS,
-            width=120, height=50, border_width=0, state='disabled',
-            text_color_disabled='white', corner_radius=8, 
-            font=('Comic Sans MS', 23))
-        button_BFS.place(x=self.disHorinzButt, y=80)
+        bt_create_proj = CTkButton(
+            master=self, text="Crear\nProtecto", #command=funcion_button_BFS,
+            width=250, height=120, border_width=0, state='normal',
+            font=('Calisto MT', 30))
+        bt_create_proj.place(x=290, y=260)
 
-        button_IDS = CTkButton(
-            master=self, text="IDS", #command=funcion_button_IDS,
-            width=120, height=50, border_width=0, state='disabled',
-            text_color_disabled='white', corner_radius=8,
-            font=('Comic Sans MS', 23))
-        button_IDS.place(x=self.disHorinzButt, y=160)
+        bt_bt_manage = CTkButton(
+            master=self, text="Gestionar\nProyecto", #command=funcion_button_IDS,
+            width=250, height=120, border_width=0, state='normal',
+            font=('Calisto MT', 30))
+        bt_bt_manage.place(x=580, y=260)
 
-        button_UCS = CTkButton(
-            master=self, text="UCS", #command=funcion_button_UCS,
-            width=120, height=50, border_width=0, state='disabled',
-            text_color_disabled='white', corner_radius=8, 
-            font=('Comic Sans MS', 23))
-        button_UCS.place(x=self.disHorinzButt, y=240)
+    def home_labels(self):
+        label = CTkLabel(
+            master=self, text="Sistema de Gestión\nde Pruebas de Software", fg_color="transparent",
+            #width=80, height=30, 
+            font=('Calisto MT', 50))
+        label.place(x=320,y=100)
 
-        button_Steps = CTkButton(
-            master=self, text="NextStep", #command=funcion_button_steps,
-            width=120, height=50, border_width=0, state='disabled',
-            text_color_disabled='white', corner_radius=8,
-            font=('Comic Sans MS', 20))
-        button_Steps.place(x=self.disHorinzButt, y=410)
-
-    def switchs(self):
-        def switch_event():
-            print("switch toggled, current value:", switch_var.get()) 
-            # imprime lo que haya en la variable switch_var
-        switch_var = StringVar(value="on") # se inicializa su valor en 'on'
-        switch = CTkSwitch(
-            master=self, text="Evitar\nDevolverse",
-            command=switch_event, variable=switch_var,
-            onvalue="Con farmac-On!! >:D", offvalue="sin farmacon :c",
-            width=120,height=50, font=('Comic Sans MS', 18))
-        # Se obtienen dos resultados, cuando se activa y cuando se desactiva
-        switch.place(x=self.disHorinzButt, y=330)
-
-    def optionMenus(self):
+    def home_optionMenus(self):
         global optionmenu
         
-        def optionmenu_callback(choice):
-            self.reader()
-            self.activateButton(button_BFS)
-            self.activateButton(button_IDS)
-            self.activateButton(button_UCS)
-            
-            self.images(map) # se llama la función que enseña las imagenes (el mapa)
-
         optionmenu = CTkOptionMenu(
-            master=self, values=["map01", "map02", "map03"],
-            command=optionmenu_callback, width=120, height=50)
-        optionmenu.set("Maps")
-        optionmenu.place(x=self.disHorinzButt, y=510)
+            master=self, values=["proyecto01", "proyecto02", "proyecto03"], #command=optionmenu_callback,
+            width=540, height=60, font=('Calisto MT', 30))
+        optionmenu.set("\tSeleccionar Proyectos")
+        optionmenu.place(x=290, y=420)
 
-    def images(self, map):
-        '''
-        try:
-            img_mindWall = ImageTk.PhotoImage(Image.open('img/MindWall.png'))  # bloqueo-> 0
-            img_Scenario = ImageTk.PhotoImage(Image.open('img/Scenario.png'))  # casilla-> 1
-            img_Smoking = ImageTk.PhotoImage(Image.open('img/Smoking.png'))  # cigarrillos-> 2
-            img_Fox = ImageTk.PhotoImage(Image.open('img/ThiefFox.png'))  # zorro-> 3
-            img_Pinocchio = ImageTk.PhotoImage(Image.open('img/PinocchioPerdido.png'))  # Pinocchio-> 4
-            img_Gepetto = ImageTk.PhotoImage(Image.open('img/Gepetto.png'))  # Gepetto-> 5
-            
-            CTkLabel(master=self, text='',image=img_Scenario).place(x=160, y=80)
-            # Con el bucle organizaremos cada personaje en su sitio, segun la matriz.
-            posY = 80 # Las posiciones empiezan inicializadas.
-            for filas in map:
-                posX = 160 # posX empieza en 160 cada avanza a la siguiente fila.
-                for columna in filas:
-                    try:
-                        if columna == 0.0:
-                            CTkLabel(master=self, text='Mind Wall', image=img_mindWall,).place(x=posX, y=posY)
-                        elif columna == 1.0:
-                            None # No se ejecutara nada, porque no es necesaria una imagen.
-                        elif columna == 2.0:
-                            CTkLabel(master=self, text='Cigarettes',image=img_Smoking).place(x=posX, y=posY)
-                        elif columna == 3.0:
-                            CTkLabel(master=self, text='Fox',image=img_Fox).place(x=posX, y=posY)
-                        elif columna == 4.0:
-                            CTkLabel(master=self, text='Pinocchio',image=img_Pinocchio).place(x=posX, y=posY)
-                        elif columna == 5.0:
-                            CTkLabel(master=self, text='Gepetto',image=img_Gepetto).place(x=posX, y=posY)
-                        else:
-                            print(f"Error en la matriz del {optionmenu.get()}")
-                        posX+=100
-                    except:
-                        print(f'Error al crear los labels.image')
-                posY+=100
-        except:
-            print('error declarando las imagenes')
-        '''
+    ##### STATES FRAME #####
+    
+    def states_frame(self):
+        self.states_buttons()
+        self.states_labels()
+        self.states_optionMenus()
+        self.states_table()
 
-    def reader(self):
-        """skiprows: Salta a la linea que le indique el argumento (int)
-        ingresado. Esto en caso de que el txt tenga encabezado.
-        Cada elemento, en la matriz, es de tipo <class 'numpy.float64'>
-        """
-        global map
-        try:
-            #map = loadtxt(f'data/{optionmenu.get()}.txt', skiprows=3)
-            map = [0][0]
-        except:
-            print('Error en la selección del mapa')
+    def states_labels(self):
+        label = CTkLabel(
+            master=self, text="Estados de Pruebas", fg_color="transparent",
+            font=('Calisto MT', 50))
+        label.place(x=390,y=10)
 
-    def activateButton(self, button):
-        #button = CTkButton()
-        button._state='enable'
-        button._state='normal'
-        button._hover=True
-        button._text_color='red'
-        button._border_color='gray'
+    def states_buttons(self):
+        # Se crean como globas para hacer alternar el estado del boton
+        bt_agregar = CTkButton(
+            master=self, text="Agregar", #command=funcion_button_BFS,
+            width=240, height=80, font=('Calisto MT', 30))
+        bt_agregar.place(x=40, y=90)
 
-    def tabView(self):
-        try:
-            tab_view = CTkTabview(master=self, width=510, height=545)
-            tab_view.add('GAME')
-            tab_view.place(x=155, y=40)
-        except:
-            print('error declarando las imagenes')
+        bt_editar = CTkButton(
+            master=self, text="Editar", #command=funcion_button_IDS,
+            width=240, height=80, #border_width=0, state='normal',
+            font=('Calisto MT', 30))
+        bt_editar.place(x=300, y=90)
+
+        bt_regresar = CTkButton(
+            master=self, text="Volver al Menú", #command=funcion_button_IDS,
+            width=240, height=80, font=('Calisto MT', 30))
+        bt_regresar.place(x=840, y=90)
+
+    def states_optionMenus(self):
+        
+        optionmenu = CTkOptionMenu(
+            master=self, values=["proyecto01", "proyecto02", "proyecto03"], #command=optionmenu_callback,
+            width=260, height=80, font=('Calisto MT', 30))
+        optionmenu.set("Seleccionar\nprueba")
+        optionmenu.place(x=560, y=90)
+
+    def states_table(self):
+        table = ttk.Treeview(
+            master=self, columns=('estado','prioridad','designado','prueba'), show='headings')
+        table.heading('estado', text='Estado')
+        table.heading('prioridad', text='Prioridad')
+        table.heading('designado', text='Designado a')
+        table.heading('prueba', text='Titulo de prueba')
+        table.place(x=40,y=190,width=1040,height=400)
+        # example
+        table.insert(parent='',index=0,values=('En curso','Alta','Harold','Prueba de aceptación'))
+        table.insert(parent='',index=0,values=('Detenido','Baja','Ana','Prueba de usabilidad'))
+        table.insert(parent='',index=0,values=('Listo','Mediana','Juan','Prueba unitaria'))
+        table.bind('<<TreeviewSelect>>', lambda event: print(table.selection()))
+
+    ##### TESTS FRAME #####
+    
+    def tests_frame(self):
+        self.tests_buttons()
+        self.tests_labels()
+        self.tests_optionMenus()
+        self.tests_entries()
+        #self.test_items_exclusive()
+        self.gestor_items_error()
+
+    def tests_buttons(self):
+        
+        bt_volver = CTkButton(
+            master=self, text="Volver", #command=funcion_button_BFS,
+            width=240, height=80, border_width=0, state='normal',
+            font=('Calisto MT', 30))
+        bt_volver.place(x=60, y=60)
+
+        bt_inicio = CTkButton(
+            master=self, text="Volver al Menú", #command=funcion_button_IDS,
+            width=240, height=80, border_width=0, state='normal',
+            font=('Calisto MT', 30))
+        bt_inicio.place(x=820, y=60)
+
+    def tests_labels(self):
+        
+        titulo = CTkLabel(
+            master=self, text="Titulo", fg_color="transparent",
+            font=('Calisto MT', 30), width=200, height=70)
+        titulo.place(x=50, y=180)
+        
+        descripcion = CTkLabel(
+            master=self, text="Descripción", fg_color="transparent",
+            font=('Calisto MT', 30), width=200, height=70)
+        descripcion.place(x=10, y=280)
+
+    def tests_optionMenus(self):
+        
+        test_state = CTkOptionMenu(
+            master=self, values=["tipo1", "tipo2", "tipo3"], #command=optionmenu_callback,
+            width=400, height=70, font=('Calisto MT', 30))
+        test_state.set("Estado")
+        test_state.place(x=660, y=280)
+        
+        test_asignar = CTkOptionMenu(
+            master=self, values=["tipo1", "tipo2", "tipo3"], #command=optionmenu_callback,
+            width=400, height=70, font=('Calisto MT', 30))
+        test_asignar.set("Asignar a")
+        test_asignar.place(x=660, y=380)
+
+    def tests_entries(self):
+        titulo = CTkEntry(
+            master=self, textvariable='',
+            width=420, height=70,
+            font=('Calisto MT', 25))
+        titulo.place(x=200, y=180)
+        
+        descripcion = CTkEntry(
+            master=self, textvariable='',
+            width=420, height=270,
+            font=('Calisto MT', 25))
+        descripcion.place(x=200, y=280)
+
+    def test_items_exclusive(self):
+        label = CTkLabel(
+            master=self, text="Diseñar Pruebas", fg_color="transparent",
+            font=('Calisto MT', 50))
+        label.place(x=390,y=70)
+        
+        test_priority = CTkOptionMenu(
+            master=self, values=["Baja", "Media", "Alta"], #command=optionmenu_callback,
+            width=400, height=70, font=('Calisto MT', 30))
+        test_priority.set("Seleccionar prioridad")
+        test_priority.place(x=660, y=180)
+        
+        def obtener_fecha():
+            print(cal.get_date())
+        
+        bt_fecha = CTkButton(
+            master=self, text="Elegir fecha", command=obtener_fecha,
+            width=280, height=80, border_width=0, state='normal',
+            font=('Calisto MT', 30))
+        bt_fecha.place(x=660, y=480)
+        
+        cal = DateEntry(self)
+        cal.place(x=960, y=500)
+
+    def gestor_items_error(self):
+        label = CTkLabel(
+            master=self, text="Gestión de Errores", fg_color="transparent",
+            font=('Calisto MT', 50))
+        label.place(x=360,y=70)
+        
+        gestor_severity = CTkOptionMenu(
+            master=self, values=["Baja", "Media", "Alta", "Crítica"], #command=optionmenu_callback,
+            width=400, height=70, font=('Calisto MT', 30))
+        gestor_severity.set("Seleccionar severidad")
+        gestor_severity.place(x=660, y=180)
+        
+        gestor_prueba = CTkOptionMenu(
+            master=self, values=["Unitaria", "Integración", "Rendimiento"], #command=optionmenu_callback,
+            width=400, height=70, font=('Calisto MT', 30))
+        gestor_prueba.set("Caso de prueba")
+        gestor_prueba.place(x=660, y=480)
 
 if __name__=="__main__":
     window = Window()
