@@ -1,6 +1,6 @@
 from .connection import conectarBD
 from tkinter import messagebox
-
+# Si intento ejecutar consultas_db.py, me sale error
 '''
 |     0      |    1      |    2      |    3      |     4      |     5      |    6      |
 |     id     |   nombre  | f_inicio  |   f_fin   |   serial   | ### proyectos ###
@@ -148,4 +148,6 @@ def contar_total_tabla(tabla):
     
     return tamaño_tabla[0][0]
 
+def aplanar_lst(lista):
+    return [elemento for sublista in lista for elemento in sublista]
 

@@ -1,9 +1,11 @@
 from customtkinter import *
-from tkinter import ttk
-from tkcalendar import DateEntry
-from db.consultas_db import custom_consulta
-
-ventana=0
+from tkinter import simpledialog, ttk
+from tkcalendar import DateEntry, Calendar
+from CTkMessagebox import CTkMessagebox
+from db.consultas_db import *
+# Pero cuando ejecuto gui.py, me ejecuta las funciones en consultas_db.py sin problemas
+ventana_act=0
+proyecto_act=''
 
 class Window(CTk):
     def __init__(self, *args, **kwargs):
@@ -21,13 +23,13 @@ class Window(CTk):
         self.title('Sistema de gestion de pruebas de software')
         self.resizable(0,0)
         ####### componentes agregados #######
-        global ventana
-        if ventana==1:
+        global ventana_act
+        if ventana_act==1:
             self.states_frame()
-        elif ventana==2:
+        elif ventana_act==2:
             self.poly_frame()
             self.test_items_exclusive()
-        elif ventana==3:
+        elif ventana_act==3:
             self.poly_frame()
             self.gestor_items_error()
         else:
@@ -43,15 +45,13 @@ class Window(CTk):
     def home_buttons(self):
         # Se crean como globas para hacer alternar el estado del boton
         bt_create_proj = CTkButton(
-            master=self, text="Crear\nProtecto",# command=self.cambia_a_StateFrame,
-            width=250, height=120, state='desanable',
-            font=('Calisto MT', 30))
+            master=self, text="Crear\nProtecto", command=self.crear_proyecto,
+            width=250, height=120, font=('Calisto MT', 30))
         bt_create_proj.place(x=290, y=260)
 
         bt_bt_manage = CTkButton(
             master=self, text="Gestionar\nProyecto", command=self.cambia_a_StateFrame,
-            width=250, height=120, state='normal',
-            font=('Calisto MT', 30))
+            width=250, height=120, font=('Calisto MT', 30))
         bt_bt_manage.place(x=580, y=260)
 
     def home_labels(self):
@@ -62,10 +62,10 @@ class Window(CTk):
         label.place(x=320,y=100)
 
     def home_optionMenus(self):
-        global optionmenu
+        proyectos = aplanar_lst(custom_consulta("""Select nombre from proyectos"""))
         
         optionmenu = CTkOptionMenu(
-            master=self, values=["proyecto01", "proyecto02", "proyecto03"], #command=optionmenu_callback,
+            master=self, values=proyectos, #command=optionmenu_callback,
             width=540, height=60, font=('Calisto MT', 30))
         optionmenu.set("\tSeleccionar Proyectos")
         optionmenu.place(x=290, y=420)
@@ -104,9 +104,11 @@ class Window(CTk):
     def states_optionMenus(self):
         
         optionmenu = CTkOptionMenu(
-            master=self, values=["proyecto01", "proyecto02", "proyecto03"], #command=optionmenu_callback,
+            master=self, values=[
+                "Gestionar Usuarios", "Casos de Pruebas", "Gestionar Errores"], 
+            #command=optionmenu_callback,
             width=260, height=80, font=('Calisto MT', 30))
-        optionmenu.set("Seleccionar\nprueba")
+        optionmenu.set("Opcion a\ngestionar")
         optionmenu.place(x=560, y=90)
 
     def states_table(self):
@@ -226,31 +228,39 @@ class Window(CTk):
         gestor_prueba.set("Caso de prueba")
         gestor_prueba.place(x=660, y=480)
 
-    ###### EXTRAS FUNCTIONS ######
+    ###### FUNCTIONS ######
     def cambia_a_home(self):
-        global ventana
-        ventana=0
+        global ventana_act
+        ventana_act=0
         self.destroy()
         iniit()
 
     def cambia_a_StateFrame(self):
-        global ventana
-        ventana=1
-        print(f'ahora es: {ventana}')
+        global ventana_act
+        ventana_act=1
+        print(f'ahora es: {ventana_act}')
         self.destroy()
         iniit()
 
     def cambia_a_TestFrame(self):
-        global ventana
-        ventana=2
+        global ventana_act
+        ventana_act=2
         self.destroy()
         iniit()
 
     def cambia_a_GestorFrame(self):
-        global ventana
-        ventana=3
+        global ventana_act
+        ventana_act=3
         self.destroy()
         iniit()
+
+    def crear_proyecto(self):
+        proyecto=[]
+        respuesta = simpledialog.askstring(' ', "Ingresa el nombre del proyecto:")
+        proyecto.append(respuesta)
+        
+        agregar('P', proyecto)
+
 
 
 def iniit():
