@@ -134,7 +134,7 @@ class Window(CTk):
 
     def tests_buttons(self):
         bt_volver = CTkButton(
-            master=self, text="Volver", command=self.cambia_a_StateFrame,
+            master=self, text="Volver", command=self.cambia_a_home,
             width=240, height=80, border_width=0, state='normal',
             font=('Calisto MT', 30))
         bt_volver.place(x=60, y=60)
@@ -143,7 +143,7 @@ class Window(CTk):
             master=self, text="Volver al Menú", command=self.cambia_a_home,
             width=240, height=80, border_width=0, state='normal',
             font=('Calisto MT', 30))
-        bt_inicio.place(x=820, y=60)
+        #bt_inicio.place(x=820, y=60)
 
         bt_agregar = CTkButton(
             master=self, text="Agregar", command=self.agregar_pruebas,
@@ -244,16 +244,19 @@ class Window(CTk):
         self.refresh()
 
     def cambia_a_StateFrame(self):
-        global ventana_act
-        ventana_act=1
-        self.refresh()
+        opp=option_proyecto.get()
+        opt=option_table.get()
+        if not(opp=='Seleccionar\nProyectos') and not(opt=='Opcion a\ngestionar'):
+            global ventana_act
+            ventana_act=1
+            self.refresh()
+        
 
     def cambiar_a_eleccion(self):
-        print(option_table.get())
         if option_table.get()=='pruebas':
-            self.cambia_a_TestFrame
+            self.cambia_a_TestFrame()
         elif option_table.get()=='errores':
-            self.cambia_a_GestorFrame
+            self.cambia_a_GestorFrame()
 
     def cambia_a_TestFrame(self):
         global ventana_act
