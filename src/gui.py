@@ -97,7 +97,7 @@ class Window(CTk):
         bt_agregar.place(x=40, y=90)
 
         bt_editar = CTkButton(
-            master=self, text="Editar", #command=self.cambia_a_GestorFrame,
+            master=self, text="Editar", command=self.editar_eleccion,
             width=240, height=80, #border_width=0, state='normal',
             font=('Calisto MT', 30))
         bt_editar.place(x=300, y=90)
@@ -106,7 +106,6 @@ class Window(CTk):
             master=self, text="Volver al Menú", command=self.cambia_a_home,
             width=240, height=80, font=('Calisto MT', 30))
         bt_regresar.place(x=840, y=90)
-        
 
     def states_table(self):
         global table_info
@@ -122,7 +121,6 @@ class Window(CTk):
         hbar = ttk.Scrollbar(self, orient="horizontal", command=table_info.xview)
         hbar.place(x=40, y=570, width=1040)
         table_info.configure(xscrollcommand=hbar.set)
-
 
     ##### POLY FRAME #####
     
@@ -146,7 +144,7 @@ class Window(CTk):
         #bt_inicio.place(x=820, y=60)
 
         bt_agregar = CTkButton(
-            master=self, text="Agregar", command=self.agregar_pruebas,
+            master=self, text="Agregar", command=self.agregar_eleccion,
             width=240, height=40, font=('Calisto MT', 20))
         bt_agregar.place(x=40, y=580)
 
@@ -274,10 +272,6 @@ class Window(CTk):
         ventana_act=3
         self.refresh()
 
-    def agregar_eleccion(self):
-        if option_table.get()=='pruebas':
-            self.agregar_pruebas()
-
     def actualizar_tabla(self):
         query=f"""
         SELECT COLUMN_NAME 
@@ -303,7 +297,24 @@ class Window(CTk):
                     parent='',index=0,values=(
                         f'{fila[0]}',f'{fila[1]}',f'{fila[2]}',f'{fila[3]}',
                         f'{fila[4]}',f'{fila[5]}',f'{fila[6]}',f'{fila[7]}'))
-        table_info.bind('<<TreeviewSelect>>', lambda event: print(table_info.set(table_info.selection()[0], "id")))
+        #table_info.bind('<<TreeviewSelect>>', lambda event: print(table_info.set(table_info.selection()[0], "id")))
+        if option_table.get()=='pruebas':
+            table_info.bind('<<TreeviewSelect>>', lambda event: self.editar_pruebas)
+        elif option_table.get()=='errores':
+            table_info.bind('<<TreeviewSelect>>', lambda event: self.editar_errores)
+
+    def crear_proyecto(self):
+        proyecto=[]
+        respuesta = simpledialog.askstring(' ', "Ingresa el nombre del proyecto:")
+        proyecto.append(respuesta)
+        
+        agregar('P', proyecto)
+
+    def agregar_eleccion(self):
+        if option_table.get()=='pruebas':
+            self.agregar_pruebas()
+        elif option_table.get()=='errores':
+            self.agregar_errores()
 
     def agregar_pruebas(self):
         prueba=[
@@ -316,19 +327,29 @@ class Window(CTk):
     def agregar_errores(self):
         error=[
             titulo.get(), descripcion.get(),
-            test_priority.get(), test_state.get(),
-            str(fecha_limite.get_date()), test_asignar.get()]
+            gestor_severity.get(), test_state.get(),
+            test_asignar.get(), gestor_tipo_bug.get()]
         print(error)
-        agregar('C', error)
+        agregar('E', error)
 
-    def crear_proyecto(self):
-        proyecto=[]
-        respuesta = simpledialog.askstring(' ', "Ingresa el nombre del proyecto:")
-        proyecto.append(respuesta)
-        
-        agregar('P', proyecto)
+    def editar_eleccion(self):
+        if option_table.get()=='pruebas':
+            self.editar_pruebas()
+        elif option_table.get()=='errores':
+            self.editar_errores()
 
+    def editar_pruebas(self):
+        id_elegido=table_info.set(table_info.selection()[0], "id")
+        info_prueba=aplanar_lst(select_row(id_elegido, 'pruebas'))
+        titulo._textvariable(info_prueba[0])
+        descripcion._textvariable(info_prueba[1])
+        #test_priority.get()
+        #test_state.get(),
+        #str(fecha_limite.get_date())
+        #test_asignar.get()
 
+    def editar_errores(self):
+        pass
 
 def iniit():
     if __name__=="__main__":
