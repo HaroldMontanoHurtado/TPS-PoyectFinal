@@ -290,8 +290,7 @@ class Window(CTk):
                     parent='',index=0,values=(
                         f'{fila[0]}',f'{fila[1]}',f'{fila[2]}',f'{fila[3]}',
                         f'{fila[4]}',f'{fila[5]}',f'{fila[6]}',f'{fila[7]}'))
-        item = table_info.selection()[0]
-        table_info.bind('<<TreeviewSelect>>', lambda event: print(table_info.set(item, "id")))
+        table_info.bind('<<TreeviewSelect>>', lambda event: print(table_info.set(table_info.selection()[0], "id")))
 
     def agregar_pruebas(self):
         prueba=[]
