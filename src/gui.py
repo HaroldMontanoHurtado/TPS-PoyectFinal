@@ -92,12 +92,12 @@ class Window(CTk):
     def states_buttons(self):
         # Se crean como globas para hacer alternar el estado del boton
         bt_agregar = CTkButton(
-            master=self, text="Agregar", command=self.cambia_a_TestFrame,
+            master=self, text="Agregar", command=self.cambiar_a_eleccion,
             width=240, height=80, font=('Calisto MT', 30))
         bt_agregar.place(x=40, y=90)
 
         bt_editar = CTkButton(
-            master=self, text="Editar", command=self.cambia_a_GestorFrame,
+            master=self, text="Editar", #command=self.cambia_a_GestorFrame,
             width=240, height=80, #border_width=0, state='normal',
             font=('Calisto MT', 30))
         bt_editar.place(x=300, y=90)
@@ -107,10 +107,6 @@ class Window(CTk):
             width=240, height=80, font=('Calisto MT', 30))
         bt_regresar.place(x=840, y=90)
         
-        bt_refresh = CTkButton(
-            master=self, text="refresh", command=self.actualizar_tabla,
-            width=240, height=40, font=('Calisto MT', 20))
-        #bt_refresh.place(x=840, y=590)
 
     def states_table(self):
         global table_info
@@ -137,7 +133,6 @@ class Window(CTk):
         self.tests_entries()
 
     def tests_buttons(self):
-        
         bt_volver = CTkButton(
             master=self, text="Volver", command=self.cambia_a_StateFrame,
             width=240, height=80, border_width=0, state='normal',
@@ -149,6 +144,11 @@ class Window(CTk):
             width=240, height=80, border_width=0, state='normal',
             font=('Calisto MT', 30))
         bt_inicio.place(x=820, y=60)
+
+        bt_agregar = CTkButton(
+            master=self, text="Agregar", command=self.agregar_pruebas,
+            width=240, height=40, font=('Calisto MT', 20))
+        bt_agregar.place(x=40, y=580)
 
     def tests_labels(self):
         
@@ -248,6 +248,13 @@ class Window(CTk):
         ventana_act=1
         self.refresh()
 
+    def cambiar_a_eleccion(self):
+        print(option_table.get())
+        if option_table.get()=='pruebas':
+            self.cambia_a_TestFrame
+        elif option_table.get()=='errores':
+            self.cambia_a_GestorFrame
+
     def cambia_a_TestFrame(self):
         global ventana_act
         ventana_act=2
@@ -273,9 +280,6 @@ class Window(CTk):
         
         tabla_completa=select_table(option_table.get())
         
-        print(tabla_completa)
-        
-        
         if option_table.get() == 'usuarios':
             for fila in tabla_completa:
                 table_info.insert(
@@ -286,21 +290,12 @@ class Window(CTk):
                     parent='',index=0,values=(
                         f'{fila[0]}',f'{fila[1]}',f'{fila[2]}',f'{fila[3]}',
                         f'{fila[4]}',f'{fila[5]}',f'{fila[6]}',f'{fila[7]}'))
-        """
-        table_info.heading('estado', text='Estado')
-        table_info.heading('prioridad', text='Prioridad')
-        table_info.heading('designado', text='Designado a')
-        table_info.heading('prueba', text='Titulo de prueba')
-        table_info.place(x=40,y=190,width=1040,height=400)
-        # example
-        table_info.insert(parent='',index=0,values=('En curso','Alta','Harold','Prueba de aceptación'))
-        table_info.insert(parent='',index=0,values=('Detenido','Baja','Ana','Prueba de usabilidad'))
-        table_info.insert(parent='',index=0,values=('Listo','Mediana','Juan','Prueba unitaria'))
-        table_info.bind('<<TreeviewSelect>>', lambda event: print(table_info.selection()))
-        """
+        item = table_info.selection()[0]
+        table_info.bind('<<TreeviewSelect>>', lambda event: print(table_info.set(item, "id")))
 
     def agregar_pruebas(self):
-        pass
+        prueba=[]
+        
 
     def crear_proyecto(self):
         proyecto=[]
