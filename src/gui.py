@@ -165,18 +165,21 @@ class Window(CTk):
     def tests_options(self):
         global test_state, test_asignar
         test_state = CTkOptionMenu(
-            master=self, values=["tipo1", "tipo2", "tipo3"], #command=optionmenu_callback,
+            master=self, values=["Listo", "En curso", "Detenido"], #command=optionmenu_callback,
             width=400, height=70, font=('Calisto MT', 30))
         test_state.set("Estado")
         test_state.place(x=660, y=280)
         
+        asignados=aplanar_lst(obtener_ids('usuarios'))
+        
         test_asignar = CTkOptionMenu(
-            master=self, values=["tipo1", "tipo2", "tipo3"], #command=optionmenu_callback,
+            master=self, values=asignados, #command=optionmenu_callback,
             width=400, height=70, font=('Calisto MT', 30))
         test_asignar.set("Asignar a")
         test_asignar.place(x=660, y=380)
 
     def tests_entries(self):
+        global titulo, descripcion
         titulo = CTkEntry(
             master=self, textvariable='',
             width=420, height=70,
@@ -195,7 +198,7 @@ class Window(CTk):
             font=('Calisto MT', 50))
         label.place(x=390,y=70)
         
-        global test_priority
+        global test_priority, fecha_limite
         test_priority = CTkOptionMenu(
             master=self, values=["Baja", "Media", "Alta"],
             width=400, height=70, font=('Calisto MT', 30))
@@ -203,16 +206,17 @@ class Window(CTk):
         test_priority.place(x=660, y=180)
         
         def obtener_fecha():
-            print(cal.get_date())
+            fecha=str(fecha_limite.get_date())
+            print(type(fecha),fecha)
         
         bt_fecha = CTkButton(
-            master=self, text="Elegir fecha", command=obtener_fecha,
-            width=280, height=80, border_width=0, state='normal',
+            master=self, text="Elegir fecha\nlimite", command=obtener_fecha,
+            width=280, height=80, border_width=0,
             font=('Calisto MT', 30))
         bt_fecha.place(x=660, y=480)
         
-        cal = DateEntry(self)
-        cal.place(x=960, y=500)
+        fecha_limite = DateEntry(self)
+        fecha_limite.place(x=960, y=500)
 
     def gestor_items_error(self):
         label = CTkLabel(
@@ -220,17 +224,20 @@ class Window(CTk):
             font=('Calisto MT', 50))
         label.place(x=360,y=70)
         
+        global gestor_severity, gestor_tipo_bug
+        
         gestor_severity = CTkOptionMenu(
-            master=self, values=["Baja", "Media", "Alta", "Crítica"], #command=optionmenu_callback,
+            master=self, values=["Baja", "Media", "Alta", "Crítica"],
             width=400, height=70, font=('Calisto MT', 30))
         gestor_severity.set("Seleccionar severidad")
         gestor_severity.place(x=660, y=180)
         
-        gestor_prueba = CTkOptionMenu(
-            master=self, values=["Unitaria", "Integración", "Rendimiento"], #command=optionmenu_callback,
+        tipos_de_errores = ["Funcional", "Visual", "Rendimiento", "Contenido", "Crash"]
+        gestor_tipo_bug = CTkOptionMenu(
+            master=self, values=tipos_de_errores,
             width=400, height=70, font=('Calisto MT', 30))
-        gestor_prueba.set("Caso de prueba")
-        gestor_prueba.place(x=660, y=480)
+        gestor_tipo_bug.set("Tipo de bug")
+        gestor_tipo_bug.place(x=660, y=480)
 
     ###### FUNCTIONS ######
     
@@ -250,7 +257,6 @@ class Window(CTk):
             global ventana_act
             ventana_act=1
             self.refresh()
-        
 
     def cambiar_a_eleccion(self):
         if option_table.get()=='pruebas':
@@ -267,6 +273,10 @@ class Window(CTk):
         global ventana_act
         ventana_act=3
         self.refresh()
+
+    def agregar_eleccion(self):
+        if option_table.get()=='pruebas':
+            self.agregar_pruebas()
 
     def actualizar_tabla(self):
         query=f"""
@@ -296,8 +306,20 @@ class Window(CTk):
         table_info.bind('<<TreeviewSelect>>', lambda event: print(table_info.set(table_info.selection()[0], "id")))
 
     def agregar_pruebas(self):
-        prueba=[]
-        
+        prueba=[
+            titulo.get(), descripcion.get(),
+            test_priority.get(), test_state.get(),
+            str(fecha_limite.get_date()), test_asignar.get()]
+        print(prueba)
+        agregar('C', prueba)
+
+    def agregar_errores(self):
+        error=[
+            titulo.get(), descripcion.get(),
+            test_priority.get(), test_state.get(),
+            str(fecha_limite.get_date()), test_asignar.get()]
+        print(error)
+        agregar('C', error)
 
     def crear_proyecto(self):
         proyecto=[]

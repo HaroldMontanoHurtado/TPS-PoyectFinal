@@ -6,7 +6,7 @@ from tkinter import messagebox
 |     id     |   nombre  | f_inicio  |   f_fin   |   serial   | ### proyectos ###
 |     id     |   nombre  |    rol    |  serial   | ### usuarios ###
 |     id     |   nombre  |descripcion| prioridad |   estado   |fecha_limite|id_asignado| ### pruebas ###
-|     id     |   nombre  |descripcion| severidad |   estado   |id_asignado | id_prueba | ### errores ###
+|     id     |   nombre  |descripcion| severidad |   estado   |id_asignado | tipo_de_error | ### errores ###
 '''
 
 def select_row(id, tabla):
@@ -51,6 +51,20 @@ def custom_consulta(query):
 
     return listar_fila
 
+def obtener_ids(tabla):
+    conexion = conectarBD()
+    
+    listar_tabla = []
+    query = f"""SELECT id FROM public.{tabla}"""
+    try:
+        conexion.cursor.execute(query)
+        listar_tabla = conexion.cursor.fetchall()
+        conexion.cerrar()
+    except Exception as ex:
+        messagebox.showerror('ERROR EN LA CONSULTA', f'{ex}.')
+
+    return listar_tabla
+
 def agregar(tabla, objeto):
     conexion = conectarBD()
     quary=''
@@ -79,7 +93,7 @@ def agregar(tabla, objeto):
         elif tabla == 'E':
             quary = f"""
             INSERT INTO public.errores(
-            id, nombre, descripcion, severidad, estado, id_asignado, id_prueba)
+            id, nombre, descripcion, severidad, estado, id_asignado, tipo_de_error)
             VALUES (1, '{objeto[0]}', '{objeto[1]}', '{objeto[2]}',
             '{objeto[3]}', '{objeto[4]}', '{objeto[5]}', '{objeto[6]}');
             UPDATE public.errores SET id = 'E' || LPAD(serial::text, 5, '0');
@@ -124,7 +138,7 @@ def editar(tabla, id, cambios):
         quary = f"""
         UPDATE public.errores
         SET nombre='{cambios[0]}', descripcion='{cambios[1]}', severidad='{cambios[2]}',
-        estado='{cambios[3]}', id_asignado='{cambios[4]}', id_prueba='{cambios[5]}'
+        estado='{cambios[3]}', id_asignado='{cambios[4]}', tipo_de_error='{cambios[5]}'
         WHERE id='{id}';
         """
     
