@@ -107,6 +107,7 @@ class Window(CTk):
             master=self, values=[
                 "Gestionar Usuarios", "Casos de Pruebas", "Gestionar Errores"], 
             #command=optionmenu_callback,
+            command=self.probando123,
             width=260, height=80, font=('Calisto MT', 30))
         optionmenu.set("Opcion a\ngestionar")
         optionmenu.place(x=560, y=90)
@@ -262,6 +263,8 @@ class Window(CTk):
         agregar('P', proyecto)
 
 
+    def probando123(self):
+        print('Llamado de prueba')
 
 def iniit():
     if __name__=="__main__":

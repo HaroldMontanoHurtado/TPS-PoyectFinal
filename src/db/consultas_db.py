@@ -54,39 +54,42 @@ def custom_consulta(query):
 def agregar(tabla, objeto):
     conexion = conectarBD()
     quary=''
-    if tabla == 'P':
-        quary = f"""
-        INSERT INTO public.proyectos(id, nombre, f_inicio)
-        VALUES (1, '{objeto[0]}', (CURRENT_DATE));
-        UPDATE public.proyectos SET id = 'P' || LPAD(serial::text, 5, '0');
-        """
-    elif tabla == 'U':
-        quary = f"""
-        INSERT INTO public.usuarios(id, nombre, rol)
-        VALUES (1, '{objeto[0]}', '{objeto[1]}');
-        UPDATE public.usuarios SET id = 'U' || LPAD(serial::text, 5, '0');
-        """
-    elif tabla == 'C':
-        quary = f"""
-        INSERT INTO public.pruebas(
-        id, nombre, descripcion, prioridad, estado, fecha_limite, id_asignado)
-        VALUES (1, '{objeto[0]}', '{objeto[1]}', '{objeto[2]}', '{objeto[3]}', '{objeto[4]}', '{objeto[5]}');
-        UPDATE public.pruebas SET id = 'C' || LPAD(serial::text, 5, '0');
-        """
-    elif tabla == 'E':
-        quary = f"""
-        INSERT INTO public.errores(
-        id, nombre, descripcion, severidad, estado, id_asignado, id_prueba)
-        VALUES (1, '{objeto[0]}', '{objeto[1]}', '{objeto[2]}',
-        '{objeto[3]}', '{objeto[4]}', '{objeto[5]}', '{objeto[6]}');
-        UPDATE public.errores SET id = 'E' || LPAD(serial::text, 5, '0');
-        """
-    elif tabla == 'A':
-        quary = f"""
-        INSERT INTO public.asignados(id, id_proy, id_user)
-        VALUES (1, '', '');
-        UPDATE public.asignados SET id = 'A' || LPAD(serial::text, 5, '0');
-        """
+    
+    if not(None in objeto) and not('' in objeto):
+        print(type(objeto[0]), objeto[0])
+        if tabla == 'P':
+            quary = f"""
+            INSERT INTO public.proyectos(id, nombre, f_inicio)
+            VALUES (1, '{objeto[0]}', (CURRENT_DATE));
+            UPDATE public.proyectos SET id = 'P' || LPAD(serial::text, 5, '0');
+            """
+        elif tabla == 'U':
+            quary = f"""
+            INSERT INTO public.usuarios(id, nombre, rol)
+            VALUES (1, '{objeto[0]}', '{objeto[1]}');
+            UPDATE public.usuarios SET id = 'U' || LPAD(serial::text, 5, '0');
+            """
+        elif tabla == 'C':
+            quary = f"""
+            INSERT INTO public.pruebas(
+            id, nombre, descripcion, prioridad, estado, fecha_limite, id_asignado)
+            VALUES (1, '{objeto[0]}', '{objeto[1]}', '{objeto[2]}', '{objeto[3]}', '{objeto[4]}', '{objeto[5]}');
+            UPDATE public.pruebas SET id = 'C' || LPAD(serial::text, 5, '0');
+            """
+        elif tabla == 'E':
+            quary = f"""
+            INSERT INTO public.errores(
+            id, nombre, descripcion, severidad, estado, id_asignado, id_prueba)
+            VALUES (1, '{objeto[0]}', '{objeto[1]}', '{objeto[2]}',
+            '{objeto[3]}', '{objeto[4]}', '{objeto[5]}', '{objeto[6]}');
+            UPDATE public.errores SET id = 'E' || LPAD(serial::text, 5, '0');
+            """
+        elif tabla == 'A':
+            quary = f"""
+            INSERT INTO public.asignados(id, id_proy, id_user)
+            VALUES (1, '{objeto[0]}', '{objeto[1]}');
+            UPDATE public.asignados SET id = 'A' || LPAD(serial::text, 5, '0');
+            """
     
     try:
         conexion.cursor.execute(quary)
