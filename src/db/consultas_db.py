@@ -154,3 +154,5 @@ def contar_total_tabla(tabla):
 def aplanar_lst(lista):
     return [elemento for sublista in lista for elemento in sublista]
 
+
+
